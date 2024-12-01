@@ -19,6 +19,7 @@ digits = {**{dig: str(i) for i,dig in enumerate(ldigs)},
 
 ### FUNCTIONS:
 lmap = lambda f, li: [f(x) for x in li]
+lzip = lambda *li: list(zip(*li))
 
 def index(*li):
     def get(itm):
