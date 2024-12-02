@@ -13,11 +13,8 @@ file = open("d0.txt")
 raws = file.read().splitlines()
 file.close()
 
-rws = """32T3K 765
-T55J5 684
-KK677 28
-KTJJT 220
-QQQJA 483""".splitlines()
+rws = """
+""".splitlines()
 
 def proc(x):
     pass
