@@ -1,5 +1,14 @@
-# Puzzle inputs
-d*.txt
+#binaries
+*.out
+.DS_Store
+
+#inputs
+*.txt
+
+#fuck rust
+*.rs
+.vscode/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
