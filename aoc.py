@@ -8,7 +8,7 @@ from collections.abc import Iterable, Sequence
 
 ### PARSING
 
-getints = lambda x: lmap(lambda y: int(y.group()), re.finditer('(-?\d+)', x))
+getints = lambda x: lmap(lambda y: int(y.group()), re.finditer(r'(-?\d+)', x))
 
 ### CONSTANTS:
 isdig = lambda x: x in '0123456789'
