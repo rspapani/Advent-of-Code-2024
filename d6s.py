@@ -71,9 +71,9 @@ def f1(li):
         sve = False
 
         inbet = lambda p1, p2: \
-                    ((p1.real == p2.real) and (obs.real == p1.real) and 
+                    ((p1.real == obs.real == p2.real) and 
                     (min(p1.imag, p2.imag) <= obs.imag <= max(p1.imag, p2.imag))) or \
-                    ((p1.imag == p2.imag) and (obs.imag == p1.imag) and 
+                    ((p1.imag == obs.imag == p2.imag) and 
                     (min(p1.real, p2.real) <= obs.real <= max(p1.real, p2.real)))
 
         while (pos, vel) not in lpe:
