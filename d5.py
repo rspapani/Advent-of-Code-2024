@@ -91,7 +91,6 @@ def f1(ru, ins):
                     if row[j] in ordering[row[i]]:
                         row[i], row[j] = row[j], row[i]
 
-            
             outs2 += row[n//2]
 
             

@@ -40,8 +40,10 @@ def f1(li):
 
     vel = -1 + 0j
     pos = strt
-    lobj = strt - 1j
     dne = set()
+    
+    lobj = strt - 1j
+    redirs = ddict(lambda: dict())
 
     while True:
         dne.add(pos)
@@ -49,6 +51,12 @@ def f1(li):
 
         match getch(npos):
             case '#':
+                redirs[lobj][vel * 1j] = pos
+                lobj = npos
+
+                if vel in redirs[npos]:
+                    pos = redirs[npos][vel]
+                    
                 vel *= -1j
             case '.' | '^':
                 pos = npos
@@ -60,6 +68,13 @@ def f1(li):
         vel = -1 + 0j
         pos = strt
         lpe = set()
+        sve = False
+
+        inbet = lambda p1, p2: \
+                    ((p1.real == p2.real) and (obs.real == p1.real) and 
+                    (min(p1.imag, p2.imag) <= obs.imag <= max(p1.imag, p2.imag))) or \
+                    ((p1.imag == p2.imag) and (obs.imag == p1.imag) and 
+                    (min(p1.real, p2.real) <= obs.real <= max(p1.real, p2.real)))
 
         while (pos, vel) not in lpe:
             lpe.add((pos, vel))
@@ -71,6 +86,23 @@ def f1(li):
 
             match getch(npos):
                 case '#':
+                    if sve:
+                        redirs[lobj][vel * 1j] = pos
+
+                    if vel in redirs[npos]:
+                        fpos = redirs[npos][vel]
+
+                        # we choose not to memoize the redirects of our new obstacles
+                        # cause that's a nuisance
+                        if not inbet(pos, fpos):
+                            pos = fpos
+
+                        sve = False
+
+                    else:
+                        sve = True
+                        lobj = npos
+
                     vel *= -1j
                 case '.' | '^':
                     pos = npos
