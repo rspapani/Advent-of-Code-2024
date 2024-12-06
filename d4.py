@@ -43,7 +43,6 @@ def matches(s):
 
     return cnt
 
-
 def diag(i, n):
     sy, sx, dn = min(i, n - 1), max(i - n, 0), min(i + 1, (2*n) - i)
     return [(sy - dc, sx + dc) for dc in range(dn)]
