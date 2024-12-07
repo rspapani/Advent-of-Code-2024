@@ -5,6 +5,8 @@ import math
 from math import prod
 from functools import reduce
 from collections.abc import Iterable, Sequence
+from collections import defaultdict
+import heapq
 
 ### PARSING
 
@@ -15,6 +17,34 @@ isdig = lambda x: x in '0123456789'
 ldigs = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
 digits = {**{dig: str(i) for i,dig in enumerate(ldigs)},
           **{i: i for i in '0123456789'}}
+
+
+## dijkstras algo, takes in a directional graph represented by a dict of dicts:
+# G = {A:{(B, 2), (C, 3)}, B:{(C:4), (D,1)}}, and takes in a start A
+# returns a dict of distances to A and a dict[x] of paths from A->x
+def dijkstra(graph, start):
+    distances = defaultdict(lambda: float('inf'))
+    distances[start] = 0
+    paths = defaultdict(list)
+    paths[start] = [start]
+    
+    pq = [(0, start)]
+    
+    while pq:
+        current_distance, current = heapq.heappop(pq)
+        
+        if current_distance > distances[current]:
+            continue
+            
+        for neighbor, weight in graph[current].items():
+            distance = current_distance + weight
+            
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                paths[neighbor] = paths[current] + [neighbor]
+                heapq.heappush(pq, (distance, neighbor))
+    
+    return distances, paths
 
 
 ### FUNCTIONS:
