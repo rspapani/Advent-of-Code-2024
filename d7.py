@@ -34,52 +34,50 @@ def f1(li):
     outs = 0
     rej = []
     for go, nums in li:
-        og = go
-        goals = [go]
+        goals = {go}
         for num in nums[1:][::-1]:
-            ng = []
+            ng = set()
             for i, goal in enumerate(goals):
-                ng.append(goal - num)
+                ng.add(goal - num)
 
                 if not goal%num:
-                    ng.append(goal//num)
+                    ng.add(goal//num)
 
             goals = ng
 
         if nums[0] in goals:
-            outs += og
+            outs += go
 
         else:
-            rej.append((og, nums))
+            rej.append((go, nums))
 
     return outs, rej
 
 def f2(li):
     outs = 0
     for go, nums in li:
-        og = go
-        goals = [go]
+        goals = {go}
 
         for num in nums[1:][::-1]:
-            ng = []
+            ng = set()
             for i, goal in enumerate(goals):
-                ng.append(goal - num)
+                ng.add(goal - num)
 
                 if not goal%num:
-                    ng.append(goal//num)
+                    ng.add(goal//num)
 
 
                 ### only meaningful difference
                 digs = next((10**i for i in range(1,100) if (10**i)>num))
 
                 if goal%digs == num:
-                    ng.append(goal//digs)
+                    ng.add(goal//digs)
                 ###
 
             goals = ng
 
         if nums[0] in goals:
-            outs += og
+            outs += go
 
     return outs
 
