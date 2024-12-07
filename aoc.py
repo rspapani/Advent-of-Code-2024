@@ -51,6 +51,23 @@ def dijkstra(graph, start):
 lmap = lambda f, li: [f(x) for x in li]
 lzip = lambda *li: list(zip(*li))
 
+def fsplit(f, li):
+    """
+    Filter split, takes in f, li.
+    returns trues, falses for f on li.
+    single pass btw.
+    """
+
+    trues, falses= [], []
+    
+    for i in li:
+        if f(i):
+            trues.append(i)
+        else:
+            falses.append(i)
+
+    return trues, falses
+
 def index(*li):
     def get(itm):
         return reduce(lambda x, y: x[y], li, itm)

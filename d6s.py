@@ -1,3 +1,5 @@
+#memoized - the s is for speed
+
 from collections import defaultdict as ddict, Counter as count
 from functools import reduce,  cmp_to_key, partial as par
 from math import prod, sqrt as root, lcm as lcm, gcd as gcd
@@ -93,7 +95,7 @@ def f1(li):
                         fpos = redirs[npos][vel]
 
                         # we choose not to memoize the redirects of our new obstacles
-                        # cause that's a nuisance
+                        # cause it's a nuisance and it's low ROI
                         if not inbet(pos, fpos):
                             pos = fpos
 
