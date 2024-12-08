@@ -7,6 +7,8 @@ from functools import reduce
 from collections.abc import Iterable, Sequence
 from collections import defaultdict
 import heapq
+from multiprocessing import Pool, cpu_count
+
 
 ### PARSING
 
@@ -19,10 +21,12 @@ digits = {**{dig: str(i) for i,dig in enumerate(ldigs)},
           **{i: i for i in '0123456789'}}
 
 
-## dijkstras algo, takes in a directional graph represented by a dict of dicts:
-# G = {A:{(B, 2), (C, 3)}, B:{(C:4), (D,1)}}, and takes in a start A
-# returns a dict of distances to A and a dict[x] of paths from A->x
 def dijkstra(graph, start):
+    """
+    dijkstras algo, takes in a directional graph represented by a dict of dicts:
+    G = {A:{(B, 2), (C, 3)}, B:{(C:4), (D,1)}}, and takes in a start A
+    returns a dict of distances to A and a dict[x] of paths from A->x
+    """
     distances = defaultdict(lambda: float('inf'))
     distances[start] = 0
     paths = defaultdict(list)
@@ -50,6 +54,23 @@ def dijkstra(graph, start):
 ### FUNCTIONS:
 lmap = lambda f, li: [f(x) for x in li]
 lzip = lambda *li: list(zip(*li))
+
+def pmap(func, items, processes=None, chunksize=None):
+    """
+    parallelized map
+    """
+    if processes is None:
+        processes = cpu_count()
+        
+    if chunksize is None:
+        try:
+            length = len(items)
+            chunksize = max(1, length // (4 * processes))
+        except (TypeError, AttributeError):
+            chunksize = 128
+    
+    with Pool(processes=processes) as pool:
+        return pool.map(func, items, chunksize=chunksize)
 
 def fsplit(f, li):
     """
@@ -112,6 +133,11 @@ def chnrem(p1, p2):
 #Chinese Remainder Theorem
 
 def crt(*pairs):
+    """
+    Chinese remainder theorem, 
+    takes in a list of pairs (a,b) and finds x
+    such that x (mod b) = a for all (a,b)
+    """
     return reduce(chnrem, pairs)
 
 

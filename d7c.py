@@ -13,16 +13,6 @@ file = open("d7.txt")
 raws = file.read().splitlines()
 file.close()
 
-sraws = """190: 10 19
-3267: 81 40 27
-83: 17 5
-156: 15 6
-7290: 6 8 6 15
-161011: 16 10 13
-192: 17 8 14
-21037: 9 7 18 13
-292: 11 6 16 20""".splitlines()
-
 def proc(x):
     goal, nums = x.split(': ')
     return int(goal), lmap(int, nums.split())
@@ -42,7 +32,7 @@ def poss(x, f = pot):
     return nums[0] in goals 
 
 def pot2(goal, num):
-    digs = next((10**i for i in range(1,100) if (10**i)>num))
+    digs = next((10**i for i in range(1,100) if (10**i)>=num))
     return pot(goal, num) + (goal//digs,) if goal%digs == num else pot(goal, num)
 
 def f2(li):

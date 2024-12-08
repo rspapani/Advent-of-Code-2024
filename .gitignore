@@ -1,3 +1,5 @@
+misc/*
+
 #binaries
 *.out
 .DS_Store
