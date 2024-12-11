@@ -27,12 +27,11 @@ def proc(x):
 
 inpt = lmap(proc, raws)
 
-
 mx, my = len(inpt), len(inpt[0])
 bounded = lambda k: 0 <= k.real < mx and 0 <= k.imag < my
 getval = lambda k: inpt[int(k.real)][int(k.imag)] if bounded(k) else -1
 
-dirs = [(0 - 1j)*((1j)**i) for i in range(4)]
+dirs = [(1j)**i for i in range(4)]
 adj = lambda k: [k + dp for dp in dirs]
 
 zeros = []
