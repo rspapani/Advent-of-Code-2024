@@ -36,11 +36,11 @@ def proc(x):
     return  lmap(getints, x.split('\n'))
 
 inpt = lmap(proc, raws)
-# print(inpt)
 
 def det(c1, c2):
     return (c1[0] * c2[1]) - (c2[0] * c1[1])
 
+@curry
 def eqnsolv(x, off=0):
     a, b, g = x
 
@@ -51,7 +51,7 @@ def eqnsolv(x, off=0):
     da = det(g, b)
     db = det(a, g)
 
-    if d == 0 or da%d or db%d :
+    if d == 0 or da%d or db%d:
         return 0
     else:
         acnt = da//d
@@ -59,14 +59,11 @@ def eqnsolv(x, off=0):
 
         return 3*acnt + bcnt
 
-
 def f1(li):
     return sum(map(eqnsolv, li))
 
-eqnsolv2 = lambda x: eqnsolv(x, off=10000000000000)
-
 def f2(li):
-    return sum(map(eqnsolv2, li))
+    return sum(map(eqnsolv(off=10000000000000), li))
 
 print("Part 1: ", f1(inpt))
 print("Part 2: ", f2(inpt))

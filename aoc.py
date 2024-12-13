@@ -3,11 +3,12 @@
 import re
 import math
 from math import prod
-from functools import reduce
+from functools import reduce, wraps
 from collections.abc import Iterable, Sequence
 from collections import defaultdict
 import heapq
 from multiprocessing import Pool, cpu_count
+import inspect
 
 
 ### PARSING
@@ -94,6 +95,43 @@ def index(*li):
         return reduce(lambda x, y: x[y], li, itm)
     
     return get
+
+
+from functools import wraps
+
+# Currying!
+def curry(func):
+    """
+    Currying functions use the @curry decorator before a function defintiion
+    also, default args will be defaulted to if not provided
+    """
+    
+    sig = inspect.signature(func)
+    params = list(sig.parameters.values())
+    
+    required_indices = {i for i, p in enumerate(params) 
+                       if p.default == inspect.Parameter.empty}
+    
+    param_names = {p.name: i for i, p in enumerate(params)}
+    
+    @wraps(func)
+    def curried(*args, **kwargs):
+        filled_required = sum(i in required_indices
+                              for i, _ in enumerate(args))
+
+        filled_required += sum(param_names[kw] in required_indices 
+                               for kw in kwargs )
+        
+        if filled_required >= len(required_indices):
+            return func(*args, **kwargs)
+            
+        def partial(*more_args, **more_kwargs):
+            return curried(*(args + more_args), **{**kwargs, **more_kwargs})
+        return partial
+        
+    return curried
+
+
 
 #def lcm(*args):
     #lc = lambda a, b: (a*b)//math.gcd(a,b)
