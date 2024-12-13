@@ -38,21 +38,24 @@ def proc(x):
 inpt = lmap(proc, raws)
 # print(inpt)
 
+def det(c1, c2):
+    return (c1[0] * c2[1]) - (c2[0] * c1[1])
+
 def eqnsolv(x, off=0):
     a, b, g = x
 
     g[0] += off
     g[1] += off
 
-    d = (a[0] * b[1]) - (b[0] * a[1])
-    acnt = ((b[1] * g[0]) - (b[0] * g[1]))
-    bcnt = ((a[0] * g[1]) - (a[1] * g[0]))
+    d = det(a, b)
+    da = det(g, b)
+    db = det(a, g)
 
-    if d == 0 or acnt%d != 0 or bcnt%d != 0:
+    if d == 0 or da%d or db%d :
         return 0
     else:
-        acnt = acnt//d
-        bcnt = bcnt//d
+        acnt = da//d
+        bcnt = db//d
 
         return 3*acnt + bcnt
 
