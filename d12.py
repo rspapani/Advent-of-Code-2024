@@ -6,6 +6,7 @@ from re import findall as rall
 
 import math
 import re
+import os, time
 
 from aoc import *
 
@@ -13,7 +14,7 @@ file = open("d12.txt")
 raws = file.read().splitlines()
 file.close()
 
-rasws = """RRRRIICCFF
+rawss = """RRRRIICCFF
 RRRRIICCCF
 VVRRRCCFFF
 VVRCCCJFFF
@@ -36,13 +37,34 @@ getval = lambda k: inpt[int(k.real)][int(k.imag)] if bounded(k) else '.'
 dirs = [(1j)**i for i in range(4)]
 adj = lambda k: [k + dp for dp in dirs]
 
-def flood(pos, ch):
+def render(dne, ch='X'):
+    os.system('clear')
+    
+
+    outs = []
+    for x in range(mx):
+        row = []
+        for y in range(my):
+            if x + (y*1j) in dne:
+                row.append(ch)
+            else:
+                row.append('.')
+        outs.append("".join(row))
+        
+    
+    print('\n'.join(outs))
+
+    time.sleep(0.01)
+
+def flood(pos, ch, disp=False):
     dne = set()
     perim = 0
 
     tbd = {pos}
 
     while tbd:
+        if disp:
+            render(dne, ch=ch)
         npos = tbd.pop()
         dne.add(npos)
         nxts, bord = fsplit(lambda x: getval(x) == ch,
