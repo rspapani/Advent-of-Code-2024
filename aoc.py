@@ -74,8 +74,8 @@ def pmap(func, items, processes=None, chunksize=None):
 
 def fsplit(f, li):
     """
-    Filter split, takes in f, li.
-    returns trues, falses for f on li.
+    Filter split, takes in f, li (iterable).
+    returns trues [], falses [] for f on li.
     single pass btw.
     """
 
