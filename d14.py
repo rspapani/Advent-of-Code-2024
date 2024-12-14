@@ -27,26 +27,6 @@ p=9,3 v=2,3
 p=7,3 v=-1,2
 p=2,4 v=2,-3
 p=9,5 v=-3,-3""".splitlines()
-
-mx = 101
-my = 103
-
-# mx, my = 11, 7
-
-bound = lambda k: int(k.real)%mx + ((int(k.imag)%my) * 1j)
-oned = lambda k: int(k.real) == mx//2 or int(k.imag) ==  my//2
-onr = lambda k: int(k.real) > mx//2 
-onb = lambda k: int(k.imag) > my//2
-
-def getq(p, v):
-    k = bound(p + 100*v)
-
-    if oned(k):
-        return 4
-    
-    else:
-        return 2*onb(k) + onr(k)
-
     
 
 def proc(x):
@@ -56,7 +36,17 @@ def proc(x):
     return (p[0] + (p[1] * 1j)),(v[0] + (v[1]*1j))
 
 inpt = lmap(proc, raws)
-# print(inpt)
+
+mx, my = 101, 103
+
+bound = lambda k: int(k.real)%mx + ((int(k.imag)%my) * 1j)
+oned = lambda k: int(k.real) == mx//2 or int(k.imag) ==  my//2
+onr = lambda k: int(k.real) > mx//2 
+onb = lambda k: int(k.imag) > my//2
+
+def getq(p, v):
+    k = bound(p + 100*v)
+    return 2*onb(k) + onr(k) if not oned(k) else 4
 
 def f1(li):
     quads = [0, 0, 0, 0, 0]
@@ -66,55 +56,20 @@ def f1(li):
 
     return reduce(lambda a, b: a*b, quads[:-1])
 
-# def getperiod(k):
-
-#i'm not making it faster, bite me
-def render(dne, ch='X'):
-    
-    outs = []
-    for x in range(mx):
-        row = []
-        for y in range(my):
-            if x + (y*1j) in dne.values():
-                row.append(ch)
-            else:
-                row.append('.')
-        outs.append("".join(row))
-        
-    os.system('clear')
-    print('\n'.join(outs))
-
-
-@curry
-def line(v, n, p):
-    return [p + (i*v) for i in range(n + 1)]
-
-hori = line(v=(0 - 1j))
-
 def f2(li):
-    n = 10
-    wi = 0 #7753
-    posses = {i:bound(p[0] + wi*p[1]) for i,p in enumerate(li)}
+    posses = {i:p[0] for i,p in enumerate(li)}
 
-    while True:
-        wi += 1
-        if wi >= mx * my:
-            return "you fucked up"
-        # if wi%100 == 0:
-        #     print(wi)
-
-        occu = set()
+    mn = (float('inf'), -1)
+    for wi in range(1, 103*101):
         for i,p in enumerate(li):
             posses[i] = bound(posses[i] + p[1])
-            occu.add(posses[i])
 
-        for p in occu:
-            if all(hp in occu 
-                   for hp in hori(p=p, n=10)):
-                
-                render(dne=posses)
-                return wi
-            
+        cent = sum(posses.values())/len(posses)
+        disp = sum(abs(x - cent) for x in posses.values())/len(posses)
+
+        mn = min(mn, (disp, wi))
+
+    return mn
 
 print("Part 1: ", f1(inpt))
 print("Part 2: ", f2(inpt))
