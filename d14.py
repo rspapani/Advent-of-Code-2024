@@ -81,35 +81,38 @@ def render(dne, ch='X'):
                 row.append('.')
         outs.append("".join(row))
         
-    potential = any("XXXXXXXXX" in row for row in outs)
+    os.system('clear')
+    print('\n'.join(outs))
 
-    if potential:
-        os.system('clear')
-        print('\n'.join(outs))
 
-    return potential
+@curry
+def line(v, n, p):
+    return [p + (i*v) for i in range(n + 1)]
+
+hori = line(v=(0 - 1j))
+
 
 def f2(li):
-    posses = {i:p[0] for i,p in enumerate(li)}
-    targ = 7750
-    wi = 0
+    n = 10
+    wi = 0 #7753
+    posses = {i:bound(p[0] + wi*p[1]) for i,p in enumerate(li)}
 
     while True:
         wi += 1
-        if wi%100 == 0:
-            print(wi)
+        # if wi%100 == 0:
+        #     print(wi)
 
         for i,p in enumerate(li):
             posses[i] = bound(posses[i] + p[1])
 
-        if wi >= targ:
-            if render(dne=posses):
+        occu = set(posses.values())
+
+        for p in occu:
+            if all(hp in occu 
+                   for hp in hori(p=p, n=10)):
+                
+                render(dne=posses)
                 return wi
 
-
-        if wi >= 103*101:
-            break
-
-# f2(inpt)
 print("Part 1: ", f1(inpt))
 print("Part 2: ", f2(inpt))
