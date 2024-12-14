@@ -91,7 +91,6 @@ def line(v, n, p):
 
 hori = line(v=(0 - 1j))
 
-
 def f2(li):
     n = 10
     wi = 0 #7753
@@ -99,13 +98,15 @@ def f2(li):
 
     while True:
         wi += 1
+        if wi >= mx * my:
+            return "you fucked up"
         # if wi%100 == 0:
         #     print(wi)
 
+        occu = set()
         for i,p in enumerate(li):
             posses[i] = bound(posses[i] + p[1])
-
-        occu = set(posses.values())
+            occu.add(posses[i])
 
         for p in occu:
             if all(hp in occu 
@@ -113,6 +114,7 @@ def f2(li):
                 
                 render(dne=posses)
                 return wi
+            
 
 print("Part 1: ", f1(inpt))
 print("Part 2: ", f2(inpt))
