@@ -57,19 +57,20 @@ def f1(li):
     return reduce(lambda a, b: a*b, quads[:-1])
 
 def f2(li):
-    posses = {i:p[0] for i,p in enumerate(li)}
+    posses = [p[0] for p in li]
+    n = len(posses)
 
     mn = (float('inf'), -1)
     for wi in range(1, 103*101):
         for i,p in enumerate(li):
             posses[i] = bound(posses[i] + p[1])
 
-        cent = sum(posses.values())/len(posses)
-        disp = sum(abs(x - cent) for x in posses.values())/len(posses)
+        cent = sum(posses)/n
+        disp = sum(abs(x - cent) for x in posses)/n
 
         mn = min(mn, (disp, wi))
 
-    return mn
+    return mn[1]
 
 print("Part 1: ", f1(inpt))
 print("Part 2: ", f2(inpt))
