@@ -13,37 +13,22 @@ file = open("d15.txt")
 raws = file.read()
 file.close()
 
-raws = """##########
-#..O..O.O#
-#......O.#
-#.OO..O.O#
-#..O@..O.#
-#O#..O...#
-#O..O..O.#
-#.OO.O.OO#
-#....O...#
-##########
-
-<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
-vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
-><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
-<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
-^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
-^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
->^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
-<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
-^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
-v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^"""
+ras = """
+"""
 
 raws = raws.split('\n\n')
 
-
-#grid functions
 inpt = lmap(list, raws[0].splitlines())
 mx, my = len(inpt), len(inpt[0])
 
 bounded = lambda k: 0 <= k.real < mx and 0 <= k.imag < my
 getval = lambda k: inpt[int(k.real)][int(k.imag)] if bounded(k) else 'L'
+
+def findch(gch):
+    for x, row in enumerate(inpt):
+        for y, ch in enumerate(row):
+            if ch == gch:
+                return x + (y * (1j))
 
 def write(k, ch):
     if bounded(k):
@@ -57,6 +42,10 @@ movs = lmap(dirs, filter(
                         lambda ch: ch != '\n',
                         raws[1]
                         ))
+
+def disp():
+    for row in inpt:
+        print("".join(row))
 
 def score():
     outs = 0
@@ -78,12 +67,8 @@ def push(cpos, mov):
             return False
 
 def f1(movs):
-    cpos = 0
-    for x, row in enumerate(inpt):
-        for y, ch in enumerate(row):
-            if ch == '@':
-                cpos += x + (y * (1j))
-                write(cpos, '.')
+    cpos = findch('@')
+    write(cpos, '.')
 
     for mov in movs:
         match getval(cpos + mov):
@@ -96,53 +81,59 @@ def f1(movs):
 
     return score()
 
+
 makebig = lambda ch: lmap(list, ["##", "..", "[]", "@."])["#.O@".index(ch)]
 makerowbig = lambda row: sum(map(makebig, row), [])
 
+def shift(cpos, mov):
+    write(cpos + mov, getval(cpos))
+    write(cpos, '.')
+
 def pushh(cpos, mov):
     match getval(cpos):
-        case '[':
+        case '[' | ']':
             if pushh(cpos + mov, mov):
-                write(cpos, ']')
-                return True
-        case ']':
-            if pushh(cpos + mov, mov):
-                write(cpos, '[')
+                shift(cpos, mov)
                 return True
         case '.':
             return True
         
     return False
 
-def pushv(cpos, mov):
-    match getval(cpos):
-        case '[':
-            rpos = cpos + 1j
-            if pushv(cpos + mov, mov) and pushv(rpos + mov, mov):
-                write(cpos + mov, '[')
-                write(rpos + mov, ']')
-                return True
-        case ']':
-            return pushv(cpos - 1j, mov)
-        case '.':
-            return True
-        
+def solidify(cposs):
+    exc = set()
+
+    for p in cposs:
+        if getval(p) == '[':
+            exc.add(p + 1j)
+            exc.add(p)
+        elif getval(p) == ']':
+            exc.add(p - 1j)
+            exc.add(p)
+
+    return exc
+
+def pushv(cposs, mov):
+    cposs = solidify(cposs)
+    nx = {p + mov for p in cposs}
+
+    if any(getval(p) == '#' for p in nx):
+        return False
+    
+    elif all(getval(p) == '.' for p in nx)\
+        or pushv(nx, mov):
+        for p in cposs:
+            shift(p, mov)
+
+        return True
+    
     return False
 
 def push2(cpos, mov):
-    vert = mov.imag == 0
-    
-    if vert and pushv(cpos, mov):
-        opos = cpos + (1j if getval(cpos) == '[' else -1j)
-        write(cpos, '.')
-        write(opos, '.')
-        return True
-
-    elif (not vert) and pushh(cpos, mov):
-        write(cpos, '.')
-        return True
-    
-    return False
+    if mov.imag == 0 :
+        return pushv([cpos], mov)
+    else:
+        return pushh(cpos, mov)
 
 
 def f2(movs):
@@ -150,17 +141,11 @@ def f2(movs):
 
     inpt = lmap(makerowbig, 
                 raws[0].splitlines())
+    
     my = len(inpt[0])
     
-    cpos = 0
-    for x, row in enumerate(inpt):
-        for y, ch in enumerate(row):
-            if ch == '@':
-                cpos += x + (y * (1j))
-                inpt[int(cpos.real)][int(cpos.imag)] = '.'
-
-    for row in inpt:
-        print("".join(row))
+    cpos = findch('@')
+    write(cpos, '.')
 
     for mov in movs:
         match getval(cpos + mov):
@@ -169,9 +154,6 @@ def f2(movs):
             case '[' | ']':
                 if push2(cpos + mov, mov):
                     cpos += mov
-
-    for row in inpt:
-        print("".join(row))
 
     return score()
 
